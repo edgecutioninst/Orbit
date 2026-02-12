@@ -1,13 +1,13 @@
 export const publicRoutes: String[] = [
-    '/'
 ]
 
 export const protectedRoutes: String[] = [
+    '/'
 ]
 
 export const authRoutes: String[] = [
-    "/auth/signin",
-    "/auth/signup"
+    "/auth/sign-in",
+    "/auth/sign-up"
 ]
 
 export const apiAuthPrefix = "/api/auth"
