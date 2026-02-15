@@ -22,6 +22,9 @@ model User {
   accounts      Account[]
   role          UserRole  @default(USER)
 
+  myPlayground      Playground[]
+  starredPlayground StarMark[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
@@ -45,4 +48,41 @@ model Account {
   @@unique([provider, providerAccountId])
   @@index([userId])
   @@map("accounts")
+}
+
+enum Templates {
+  REACT
+  NEXTJS
+  EXPRESS
+  VUE
+  ANGULAR
+  HONO
+  JAVASCRIPT
+  TYPESCRIPT
+}
+
+model Playground {
+  id          String     @id @default(cuid()) @map("_id")
+  title       String
+  description String
+  template    Templates  @default(JAVASCRIPT)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  starMarks   StarMark[]
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model StarMark {
+  id           String   @id @default(cuid()) @map("_id")
+  userId       String
+  playgroundId String
+  isMarked     Boolean
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playground Playground @relation(fields: [playgroundId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, playgroundId])
 }
