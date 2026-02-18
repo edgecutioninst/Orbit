@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from "next/image"
@@ -40,7 +39,6 @@ import { useState } from "react"
 import { MoreHorizontal, Edit3, Trash2, ExternalLink, Copy, Download, Eye } from "lucide-react"
 import { toast } from "sonner"
 import { MarkedToggleButton } from "./marked-toggle"
-
 
 interface ProjectTableProps {
     projects: Project[] | any[] //any to pass type issue for now 
@@ -96,8 +94,6 @@ export default function ProjectTable({
         }
     }
 
-
-
     const handleDeleteProject = async () => {
         if (!selectedProject || !onDeleteProject) return
         setIsLoading(true)
@@ -127,7 +123,6 @@ export default function ProjectTable({
         }
     }
 
-
     const copyProjectUrl = (projectId: string) => {
         const url = `${window.location.origin}/playground/${projectId}`
         navigator.clipboard.writeText(url)
@@ -152,7 +147,7 @@ export default function ProjectTable({
                             <TableRow key={project.id}>
                                 <TableCell className="font-medium">
                                     <div className="flex flex-col">
-                                        <Link href={`/projects/${project.id}`} className="hover:underline">
+                                        <Link href={`/playground/${project.id}`} className="hover:underline">
                                             <span className="font-semibold">{project.title}</span>
                                         </Link>
                                         <span className="text-sm text-gray-500 line-clamp-1">{project.description}</span>
@@ -192,13 +187,13 @@ export default function ProjectTable({
                                                     id={project.id} />
                                             </DropdownMenuItem>
                                             <DropdownMenuItem asChild>
-                                                <Link href={`/projects/${project.id}`} className="flex items-center">
+                                                <Link href={`/playground/${project.id}`} className="flex items-center">
                                                     <Eye className="h-4 w-4 mr-2" />
                                                     Open Project
                                                 </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem asChild>
-                                                <Link href={`/projects/${project.id}`} target="_blank" className="flex items-center">
+                                                <Link href={`/playground/${project.id}`} target="_blank" className="flex items-center">
                                                     <ExternalLink className="h-4 w-4 mr-2" />
                                                     Open in New Tab
                                                 </Link>
@@ -299,5 +294,3 @@ export default function ProjectTable({
         </>
     )
 }
-
-
