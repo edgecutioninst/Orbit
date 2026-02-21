@@ -51,12 +51,12 @@ model Account {
 }
 
 enum Templates {
-  REACT
-  NEXTJS
-  EXPRESS
-  VUE
-  ANGULAR
-  HONO
+  CPP
+  C
+  JAVA
+  PYTHON
+  RUST
+  RUBY
   JAVASCRIPT
   TYPESCRIPT
 }

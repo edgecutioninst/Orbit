@@ -10,20 +10,17 @@ import { useParams } from 'next/navigation'
 import React, { useEffect, useCallback, useRef } from 'react'
 import dynamic from 'next/dynamic';
 
-const WebContainerPreview = dynamic(
-    () => import('@/modules/webcontainers/components/webcontainer-preview'),
-    { ssr: false }
-);
+
 // import WebContainerPreview from '@/modules/webcontainers/components/webcontainer-preview'
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Bot, Cat, FileText, FolderOpen, Save, Settings, X } from 'lucide-react';
+import { AlertCircle, Bot, Cat, FileText, FolderOpen, Loader2, Save, Settings, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import PlaygroundEditor from '@/modules/playground/components/playground-editor';
-import { useWebContainer } from '@/modules/webcontainers/hooks/useWebContainer';
 import { toast } from "sonner"
 import { findFilePath } from '@/modules/playground/lib';
+import { executeCodeOnServer } from "@/modules/dashboard/actions/index"
 import LoadingStep from '@/modules/playground/components/loader';
 
 
@@ -54,15 +51,6 @@ const MainPlaygroundPage = () => {
 
     } = useFileExplorerStore()
 
-    const {
-        serverUrl,
-        isLoading: containerLoading,
-        error: containerError,
-        instance,
-        writeFileSync,
-        destroy,
-        //@ts-ignore
-    } = useWebContainer({ templateData })
 
     useEffect(() => { setPlaygroundId(id) }, [id, setPlaygroundId])
 
@@ -81,19 +69,17 @@ const MainPlaygroundPage = () => {
             return handleAddFile(
                 newFile,
                 parentPath,
-                writeFileSync!,
-                instance,
                 saveTemplateData
             );
         },
-        [handleAddFile, writeFileSync, instance, saveTemplateData]
+        [handleAddFile, saveTemplateData]
     );
 
     const wrappedHandleAddFolder = useCallback(
         (newFolder: TemplateFolder, parentPath: string) => {
-            return handleAddFolder(newFolder, parentPath, instance, saveTemplateData);
+            return handleAddFolder(newFolder, parentPath, saveTemplateData);
         },
-        [handleAddFolder, instance, saveTemplateData]
+        [handleAddFolder, saveTemplateData]
     );
 
     const wrappedHandleDeleteFile = useCallback(
@@ -143,6 +129,30 @@ const MainPlaygroundPage = () => {
     const activeFile = openFiles.find((file) => file.id === activeFileId);
     const hasUnsavedChanges = openFiles.some((file) => file.hasUnsavedChanges);
 
+    // New States for Execution
+    const [output, setOutput] = React.useState("");
+    const [isRunning, setIsRunning] = React.useState(false);
+
+    // The Execution Function
+    const executeCode = async () => {
+        if (!activeFile) {
+            toast.error("No file selected to run");
+            return;
+        }
+
+        setIsPreviewVisible(true); // Open the terminal panel
+        setIsRunning(true);
+        setOutput("Compiling and Running...\n");
+
+        try {
+            const result = await executeCodeOnServer(activeFile.content, activeFile.fileExtension);
+            setOutput(result.output);
+        } catch (error) {
+            setOutput("Something went wrong trying to execute the code.");
+        } finally {
+            setIsRunning(false);
+        }
+    };
 
     const handleSave = useCallback(
         async (fileId?: string) => {
@@ -187,16 +197,6 @@ const MainPlaygroundPage = () => {
                     updatedTemplateData.items
                 );
 
-                // Sync with WebContainer
-                if (writeFileSync) {
-                    await writeFileSync(filePath, fileToSave.content);
-                    lastSyncedContent.current.set(fileToSave.id, fileToSave.content);
-                    if (instance && instance.fs) {
-                        await instance.fs.writeFile(filePath, fileToSave.content);
-                    }
-                }
-                await saveTemplateData(updatedTemplateData);
-                setTemplateData(updatedTemplateData);
 
                 // Update open files
                 const updatedOpenFiles = openFiles.map((f) =>
@@ -225,8 +225,6 @@ const MainPlaygroundPage = () => {
         [
             activeFileId,
             openFiles,
-            writeFileSync,
-            instance,
             saveTemplateData,
             setTemplateData,
             setOpenFiles,
@@ -394,8 +392,15 @@ const MainPlaygroundPage = () => {
                                         <p>Save All (Ctrl + Shift + S)</p>
                                     </TooltipContent>
                                 </Tooltip>
-                                <Button variant={"ghost"} size={"sm"} className="text-zinc-400 hover:text-purple-400 hover:bg-purple-900/20">
-                                    <Cat className='mr-2 h-4 w-4' /> Run
+                                <Button
+                                    variant={"ghost"}
+                                    size={"sm"}
+                                    className="text-zinc-400 hover:text-green-400 hover:bg-green-900/20"
+                                    onClick={executeCode}
+                                    disabled={isRunning || !activeFile}
+                                >
+                                    {isRunning ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : <Cat className='mr-2 h-4 w-4' />}
+                                    {isRunning ? "Running..." : "Run"}
                                 </Button>
 
                                 <DropdownMenu>
@@ -482,15 +487,22 @@ const MainPlaygroundPage = () => {
                                             <>
                                                 <ResizableHandle />
                                                 <ResizablePanel defaultSize={50}>
-                                                    <WebContainerPreview
-                                                        templateData={templateData}
-                                                        instance={instance}
-                                                        writeFileSync={writeFileSync}
-                                                        isLoading={containerLoading}
-                                                        error={containerError}
-                                                        serverUrl={serverUrl!}
-                                                        forceResetup={false}
-                                                    />
+                                                    <div className="flex flex-col h-full bg-[#0a0014] border-l border-purple-900/20">
+                                                        <div className="flex items-center justify-between px-4 py-2 border-b border-purple-900/20 bg-[#03000a]">
+                                                            <span className="text-sm font-medium text-purple-300">Terminal Output</span>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="h-6 w-6 p-0 text-zinc-500 hover:text-purple-300"
+                                                                onClick={() => setIsPreviewVisible(false)}
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
+                                                        <div className="flex-1 p-4 overflow-y-auto font-mono text-sm text-green-400 whitespace-pre-wrap">
+                                                            {output || "Ready to execute code..."}
+                                                        </div>
+                                                    </div>
                                                 </ResizablePanel>
                                             </>
                                         )}

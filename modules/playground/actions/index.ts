@@ -29,12 +29,14 @@ export const getPlaygroundById = async (id: string) => {
 }
 
 export const saveUpdatedCode = async (playgroundId: string, data: TemplateFolder) => {
-    const user = await currentUser()
+    const user = await currentUser();
     if (!user) {
-        throw new Error("Unauthorized")
+        throw new Error("Unauthorized");
     }
 
     try {
+        // Because data is an object (TemplateFolder), we need to tell Prisma 
+        // to treat it as a generic JSON object when saving.
         const updatedFile = await db.templateFile.upsert({
             where: {
                 playgroundId: playgroundId
@@ -46,10 +48,10 @@ export const saveUpdatedCode = async (playgroundId: string, data: TemplateFolder
                 playgroundId: playgroundId,
                 content: data as any,
             }
-        })
-        return updatedFile
+        });
+        return updatedFile;
     } catch (error) {
-        console.error("Error saving updated code:", error)
-        throw new Error("Failed to save updated code")
+        console.error("Error saving updated code:", error);
+        throw new Error("Failed to save updated code");
     }
 }

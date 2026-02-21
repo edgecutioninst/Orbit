@@ -17,30 +17,27 @@ import {
     Search,
     Star,
     Code,
-    Server,
-    Globe,
     Zap,
     Clock,
     Check,
     Plus,
-    ShieldCheck, // Added for TS
-    Braces       // Added for JS
+    Cpu,
+    Layers,
+    Terminal
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
-// Updated to include TYPESCRIPT and JAVASCRIPT
 type TemplateSelectionModalProps = {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (data: {
         title: string;
-        template: "REACT" | "NEXTJS" | "EXPRESS" | "VUE" | "HONO" | "ANGULAR" | "TYPESCRIPT" | "JAVASCRIPT";
+        template: "CPP" | "C" | "JAVA" | "PYTHON" | "RUST" | "RUBY" | "JAVASCRIPT" | "TYPESCRIPT";
         description?: string;
     }) => void;
 };
 
-// Added lucideIcon as an optional property for our TS/JS templates
 interface TemplateOption {
     id: string;
     name: string;
@@ -51,98 +48,98 @@ interface TemplateOption {
     popularity: number;
     tags: string[];
     features: string[];
-    category: "frontend" | "backend" | "fullstack";
+    category: "compiled" | "oop" | "scripting";
 }
 
 const templates: TemplateOption[] = [
     {
-        id: "typescript",
-        name: "TypeScript",
-        description: "Strictly typed JavaScript environment for robust architecture and safety.",
-        icon: "/typescript.svg",
-        color: "#3178C6",
+        id: "cpp",
+        name: "C++",
+        description: "High-performance compiled language for systems and competitive programming.",
+        icon: "/cpp.svg",
+        color: "#00599C",
         popularity: 5,
-        tags: ["Vanilla", "Strict", "Fullstack"],
-        features: ["Static Typing", "Object-Oriented", "Modern Syntax"],
-        category: "fullstack",
+        tags: ["Compiled", "Systems", "DSA"],
+        features: ["STL Support", "Manual Memory", "Fast Execution"],
+        category: "compiled",
+    },
+    {
+        id: "c",
+        name: "C",
+        description: "The mother of all modern languages. Pure, fast, and close to the metal.",
+        icon: "/c.svg",
+        color: "#A8B9CC",
+        popularity: 4,
+        tags: ["Compiled", "Low-Level"],
+        features: ["Pointers", "Direct Memory Access", "No Overhead"],
+        category: "compiled",
+    },
+    {
+        id: "java",
+        name: "Java",
+        description: "Object-oriented language for enterprise applications and rigorous software design.",
+        icon: "/java.svg",
+        color: "#ED8B00",
+        popularity: 5,
+        tags: ["OOP", "Strongly Typed"],
+        features: ["JVM Based", "Robust Libraries", "Multi-threading"],
+        category: "oop",
+    },
+    {
+        id: "python",
+        name: "Python",
+        description: "Interpreted language famous for clean syntax, rapid logic testing, and data science.",
+        icon: "/python.svg",
+        color: "#3776AB",
+        popularity: 5,
+        tags: ["Scripting", "Interpreted"],
+        features: ["Clean Syntax", "Huge Ecosystem", "Dynamic Typing"],
+        category: "scripting",
+    },
+    {
+        id: "rust",
+        name: "Rust",
+        description: "Blazing fast memory safety without a garbage collector.",
+        icon: "/rust.svg",
+        color: "#DEA584",
+        popularity: 4,
+        tags: ["Safety", "Systems"],
+        features: ["Borrow Checker", "Zero-cost Abstractions", "Fearless Concurrency"],
+        category: "compiled",
+    },
+    {
+        id: "ruby",
+        name: "Ruby",
+        description: "A dynamic, open source programming language with a focus on simplicity and productivity.",
+        icon: "/ruby.svg",
+        color: "#CC342D",
+        popularity: 3,
+        tags: ["Scripting", "OOP"],
+        features: ["Elegant Syntax", "Everything is an Object", "Dynamic"],
+        category: "scripting",
     },
     {
         id: "javascript",
-        name: "Vanilla JS",
+        name: "JavaScript",
         description: "Standard JavaScript environment for quick prototyping and logic.",
         icon: "/javascript.svg",
         color: "#F7DF1E",
         popularity: 5,
-        tags: ["Vanilla", "Dynamic", "Scripting"],
+        tags: ["Vanilla", "Dynamic"],
         features: ["Dynamic Typing", "Ubiquitous", "Event-Driven"],
-        category: "fullstack",
+        category: "scripting",
     },
     {
-        id: "react",
-        name: "React",
-        description: "A JavaScript library for building user interfaces with component-based architecture",
-        icon: "/react.svg",
-        color: "#61DAFB",
-        popularity: 5,
-        tags: ["UI", "Frontend", "JavaScript"],
-        features: ["Component-Based", "Virtual DOM", "JSX Support"],
-        category: "frontend",
-    },
-    {
-        id: "nextjs",
-        name: "Next.js",
-        description: "The React framework for production with server-side rendering and static site generation",
-        icon: "/nextjs-icon.svg",
-        color: "#ffffff",
+        id: "typescript",
+        name: "TypeScript",
+        description: "Strictly typed JavaScript environment for robust logic and safety.",
+        icon: "/typescript.svg",
+        color: "#3178C6",
         popularity: 4,
-        tags: ["React", "SSR", "Fullstack"],
-        features: ["Server Components", "API Routes", "File-based Routing"],
-        category: "fullstack",
-    },
-    {
-        id: "express",
-        name: "Express",
-        description: "Fast, unopinionated, minimalist web framework for Node.js to build APIs and web applications",
-        icon: "/expressjs-icon.svg",
-        color: "#ffffff",
-        popularity: 4,
-        tags: ["Node.js", "API", "Backend"],
-        features: ["Middleware", "Routing", "HTTP Utilities"],
-        category: "backend",
-    },
-    {
-        id: "vue",
-        name: "Vue.js",
-        description: "Progressive JavaScript framework for building user interfaces with an approachable learning curve",
-        icon: "/vuejs-icon.svg",
-        color: "#4FC08D",
-        popularity: 4,
-        tags: ["UI", "Frontend", "JavaScript"],
-        features: ["Reactive Data Binding", "Component System", "Virtual DOM"],
-        category: "frontend",
-    },
-    {
-        id: "hono",
-        name: "Hono",
-        description: "Fast, lightweight, built on Web Standards. Support for any JavaScript runtime.",
-        icon: "/hono.svg",
-        color: "#e36002",
-        popularity: 3,
-        tags: ["Node.js", "TypeScript", "Backend"],
-        features: ["Dependency Injection", "TypeScript Support", "Modular Architecture"],
-        category: "backend",
-    },
-    {
-        id: "angular",
-        name: "Angular",
-        description: "Angular is a web framework that empowers developers to build fast, reliable applications.",
-        icon: "/angular-2.svg",
-        color: "#DD0031",
-        popularity: 3,
-        tags: ["React", "Fullstack", "JavaScript"],
-        features: ["Reactive Data Binding", "Component System", "Virtual DOM", "Dependency Injection", "TypeScript Support"],
-        category: "fullstack",
-    },
+        tags: ["Strict", "Typed"],
+        features: ["Static Typing", "Object-Oriented", "Modern Syntax"],
+        category: "scripting",
+    }
 ];
 
 const TemplateSelectionModal = ({
@@ -153,7 +150,7 @@ const TemplateSelectionModal = ({
     const [step, setStep] = useState<"select" | "configure">("select");
     const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const [category, setCategory] = useState<"all" | "frontend" | "backend" | "fullstack">("all");
+    const [category, setCategory] = useState<"all" | "compiled" | "oop" | "scripting">("all");
     const [projectName, setProjectName] = useState("");
 
     const filteredTemplates = templates.filter((template) => {
@@ -178,15 +175,15 @@ const TemplateSelectionModal = ({
 
     const handleCreateProject = () => {
         if (selectedTemplate) {
-            const templateMap: Record<string, "REACT" | "NEXTJS" | "EXPRESS" | "VUE" | "HONO" | "ANGULAR" | "TYPESCRIPT" | "JAVASCRIPT"> = {
-                react: "REACT",
-                nextjs: "NEXTJS",
-                express: "EXPRESS",
-                vue: "VUE",
-                hono: "HONO",
-                angular: "ANGULAR",
-                typescript: "TYPESCRIPT",
-                javascript: "JAVASCRIPT"
+            const templateMap: Record<string, "CPP" | "C" | "JAVA" | "PYTHON" | "RUST" | "RUBY" | "JAVASCRIPT" | "TYPESCRIPT"> = {
+                cpp: "CPP",
+                c: "C",
+                java: "JAVA",
+                python: "PYTHON",
+                rust: "RUST",
+                ruby: "RUBY",
+                javascript: "JAVASCRIPT",
+                typescript: "TYPESCRIPT"
             };
 
             const template = templates.find((t) => t.id === selectedTemplate);
@@ -194,7 +191,7 @@ const TemplateSelectionModal = ({
             if (template) {
                 onSubmit({
                     title: projectName.trim() || `${template.name} Project`,
-                    template: templateMap[selectedTemplate] || "REACT", // Default to REACT if not found, though it should always be found
+                    template: templateMap[selectedTemplate],
                     description: template?.description,
                 });
             }
@@ -240,10 +237,10 @@ const TemplateSelectionModal = ({
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-purple-400 flex items-center gap-2">
                                 <Plus size={24} className="text-purple-500" />
-                                Select a Template
+                                Select an Environment
                             </DialogTitle>
                             <DialogDescription className="text-purple-400/50">
-                                Choose a template to create your new playground
+                                Choose a language to create your new playground
                             </DialogDescription>
                         </DialogHeader>
 
@@ -255,7 +252,7 @@ const TemplateSelectionModal = ({
                                         size={18}
                                     />
                                     <Input
-                                        placeholder="Search templates..."
+                                        placeholder="Search languages..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="pl-10 bg-[#0a0515] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50 focus-visible:ring-purple-500/50"
@@ -269,9 +266,9 @@ const TemplateSelectionModal = ({
                                 >
                                     <TabsList className="grid grid-cols-4 w-full sm:w-[400px] bg-[#0a0515] border border-purple-900/30 p-1">
                                         <TabsTrigger value="all" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">All</TabsTrigger>
-                                        <TabsTrigger value="frontend" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">Frontend</TabsTrigger>
-                                        <TabsTrigger value="backend" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">Backend</TabsTrigger>
-                                        <TabsTrigger value="fullstack" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">Fullstack</TabsTrigger>
+                                        <TabsTrigger value="compiled" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">Compiled</TabsTrigger>
+                                        <TabsTrigger value="oop" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">OOP</TabsTrigger>
+                                        <TabsTrigger value="scripting" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">Scripting</TabsTrigger>
                                     </TabsList>
                                 </Tabs>
                             </div>
@@ -314,6 +311,10 @@ const TemplateSelectionModal = ({
                                                                 width={32}
                                                                 height={32}
                                                                 className="object-contain drop-shadow-md"
+                                                                onError={(e) => {
+                                                                    // Fallback if SVG isn't found in your public folder yet
+                                                                    e.currentTarget.style.display = 'none';
+                                                                }}
                                                             />
                                                         )}
                                                     </div>
@@ -324,9 +325,9 @@ const TemplateSelectionModal = ({
                                                                 {template.name}
                                                             </h3>
                                                             <div className="flex gap-1">
-                                                                {template.category === "frontend" && <Code size={14} className="text-blue-400" />}
-                                                                {template.category === "backend" && <Server size={14} className="text-green-400" />}
-                                                                {template.category === "fullstack" && <Globe size={14} className="text-purple-400" />}
+                                                                {template.category === "compiled" && <Cpu size={14} className="text-blue-400" />}
+                                                                {template.category === "oop" && <Layers size={14} className="text-orange-400" />}
+                                                                {template.category === "scripting" && <Terminal size={14} className="text-green-400" />}
                                                             </div>
                                                         </div>
 
@@ -356,9 +357,9 @@ const TemplateSelectionModal = ({
                                         ))
                                     ) : (
                                         <div className="col-span-2 flex flex-col items-center justify-center p-12 text-center border border-dashed border-purple-900/30 rounded-xl bg-[#0a0515]">
-                                            <Search size={48} className="text-purple-900/50 mb-4" />
+                                            <Code size={48} className="text-purple-900/50 mb-4" />
                                             <h3 className="text-lg font-medium text-purple-300">
-                                                No templates found
+                                                No languages found
                                             </h3>
                                             <p className="text-sm text-purple-500/50">
                                                 Try adjusting your search or filters
@@ -374,7 +375,7 @@ const TemplateSelectionModal = ({
                                 <Clock size={14} className="mr-2 text-purple-500" />
                                 <span>
                                     Estimated setup time:{" "}
-                                    <span className="text-purple-300">{selectedTemplate ? "2-5 seconds" : "Select a template"}</span>
+                                    <span className="text-purple-300">{selectedTemplate ? "< 1 second" : "Select a language"}</span>
                                 </span>
                             </div>
                             <div className="flex gap-3">
@@ -395,10 +396,10 @@ const TemplateSelectionModal = ({
                     <>
                         <DialogHeader>
                             <DialogTitle className="text-2xl font-bold text-purple-400">
-                                Configure Your Project
+                                Configure Your Environment
                             </DialogTitle>
                             <DialogDescription className="text-purple-400/50">
-                                <span className="text-purple-300 font-semibold">{templates.find((t) => t.id === selectedTemplate)?.name}</span> project configuration
+                                <span className="text-purple-300 font-semibold">{templates.find((t) => t.id === selectedTemplate)?.name}</span> playground configuration
                             </DialogDescription>
                         </DialogHeader>
 
@@ -407,7 +408,7 @@ const TemplateSelectionModal = ({
                                 <Label htmlFor="project-name" className="text-purple-300">Project Name</Label>
                                 <Input
                                     id="project-name"
-                                    placeholder="my-awesome-project"
+                                    placeholder="my-algorithm-practice"
                                     value={projectName}
                                     onChange={(e) => setProjectName(e.target.value)}
                                     className="bg-[#0a0515] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50 focus-visible:ring-purple-500/50"
@@ -415,7 +416,7 @@ const TemplateSelectionModal = ({
                             </div>
 
                             <div className="p-5 bg-purple-950/10 rounded-xl border border-purple-900/30 shadow-[inset_0_0_20px_rgba(168,85,247,0.02)]">
-                                <h3 className="font-medium text-purple-300 mb-4">Selected Template Features</h3>
+                                <h3 className="font-medium text-purple-300 mb-4">Selected Environment Features</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {templates
                                         .find((t) => t.id === selectedTemplate)
