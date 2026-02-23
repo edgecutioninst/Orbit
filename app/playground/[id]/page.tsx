@@ -8,10 +8,7 @@ import { usePlayground } from '@/modules/playground/hooks/usePlayground';
 import { TemplateFile, TemplateFolder } from '@/modules/playground/lib/path-to-json';
 import { useParams } from 'next/navigation'
 import React, { useEffect, useCallback, useRef } from 'react'
-import dynamic from 'next/dynamic';
-
-
-// import WebContainerPreview from '@/modules/webcontainers/components/webcontainer-preview'
+import ChatPanel from '@/modules/playground/components/chat-panel';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Bot, Cat, FileText, FolderOpen, Loader2, Save, Settings, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -28,6 +25,8 @@ const MainPlaygroundPage = () => {
 
     const { id } = useParams<{ id: string }>()
     const [isPreviewVisible, setIsPreviewVisible] = React.useState(false)
+
+    const [activeRightPanel, setActiveRightPanel] = React.useState<"terminal" | "chat">("terminal");
 
     const { playgroundData, templateData, isLoading, saveTemplateData, error } = usePlayground(id)
 
@@ -140,7 +139,8 @@ const MainPlaygroundPage = () => {
             return;
         }
 
-        setIsPreviewVisible(true); // Open the terminal panel
+        setIsPreviewVisible(true);
+        setActiveRightPanel("terminal");
         setIsRunning(true);
         setOutput("Compiling and Running...\n");
 
@@ -403,6 +403,19 @@ const MainPlaygroundPage = () => {
                                     {isRunning ? "Running..." : "Run"}
                                 </Button>
 
+                                <Button
+                                    variant={"ghost"}
+                                    size={"sm"}
+                                    className={`text-zinc-400 hover:text-purple-400 hover:bg-purple-900/20 ${isPreviewVisible && activeRightPanel === "chat" ? "bg-purple-900/20 text-purple-400" : ""}`}
+                                    onClick={() => {
+                                        setIsPreviewVisible(true);
+                                        setActiveRightPanel("chat");
+                                    }}
+                                >
+                                    <Bot className='mr-2 h-4 w-4' />
+                                    AI
+                                </Button>
+
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button size="sm" variant="ghost" className="text-zinc-400 hover:text-purple-400 hover:bg-purple-900/20">
@@ -469,8 +482,7 @@ const MainPlaygroundPage = () => {
                                         </div>
                                     </Tabs>
                                 </div>
-                                <div className="flex-1 p-4 text-zinc-300 font-mono text-sm">
-                                    {/* @ts-ignore - shadcn type mismatch */}
+                                <div className="flex-1 p-4 text-zinc-300 font-mono text-sm min-h-0 overflow-hidden">                                    {/* @ts-ignore - shadcn type mismatch */}
                                     <ResizablePanelGroup direction="horizontal" className="h-full">
 
                                         <ResizablePanel defaultSize={isPreviewVisible ? 50 : 100}>
@@ -486,22 +498,39 @@ const MainPlaygroundPage = () => {
                                         {isPreviewVisible && (
                                             <>
                                                 <ResizableHandle />
-                                                <ResizablePanel defaultSize={50}>
-                                                    <div className="flex flex-col h-full bg-[#0a0014] border-l border-purple-900/20">
-                                                        <div className="flex items-center justify-between px-4 py-2 border-b border-purple-900/20 bg-[#03000a]">
-                                                            <span className="text-sm font-medium text-purple-300">Terminal Output</span>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                className="h-6 w-6 p-0 text-zinc-500 hover:text-purple-300"
-                                                                onClick={() => setIsPreviewVisible(false)}
-                                                            >
-                                                                <X className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
-                                                        <div className="flex-1 p-4 overflow-y-auto font-mono text-sm text-green-400 whitespace-pre-wrap">
-                                                            {output || "Ready to execute code..."}
-                                                        </div>
+                                                {/* 1. We force the panel to have a relative position and NO minimum width */}
+                                                <ResizablePanel defaultSize={50} className="relative min-w-0">
+
+                                                    {/* 2. This absolute container is the "Secret Sauce" */}
+                                                    {/* It forces the chat/terminal to be exactly the size of the panel, never bigger */}
+                                                    <div className="absolute inset-0 overflow-hidden flex flex-col">
+
+                                                        {activeRightPanel === "terminal" ? (
+                                                            <div className="flex flex-col h-full bg-[#0a0014] border-l border-purple-900/20">
+                                                                <div className="flex items-center justify-between px-4 py-2 border-b border-purple-900/20 bg-[#03000a]">
+                                                                    <span className="text-sm font-medium text-purple-300">Terminal Output</span>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        className="h-6 w-6 p-0 text-zinc-500 hover:text-purple-300"
+                                                                        onClick={() => setIsPreviewVisible(false)}
+                                                                    >
+                                                                        <X className="h-4 w-4" />
+                                                                    </Button>
+                                                                </div>
+                                                                {/* 3. Added break-all to terminal to prevent wide output blowout */}
+                                                                <div className="flex-1 p-4 overflow-auto font-mono text-sm text-green-400 whitespace-pre-wrap break-all">
+                                                                    {output || "Ready to execute code..."}
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <ChatPanel
+                                                                onClose={() => setIsPreviewVisible(false)}
+                                                                code={activeFile?.content || ""}
+                                                                language={activeFile?.fileExtension || "text"}
+                                                            />
+                                                        )}
+
                                                     </div>
                                                 </ResizablePanel>
                                             </>

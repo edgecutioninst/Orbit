@@ -116,10 +116,31 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Custom Scrollbar for Code Blocks */
+pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: rgba(10, 0, 20, 0.5);
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: #7c3aed;
+  /* purple-600 */
+  border-radius: 10px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;
+  /* purple-400 */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
