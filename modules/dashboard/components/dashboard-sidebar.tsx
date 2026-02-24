@@ -4,22 +4,22 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
     Code2,
-    Compass,
     FolderPlus,
     History,
     Home,
     LayoutDashboard,
-    Lightbulb,
-    type LucideIcon,
     Plus,
     Settings,
     Star,
-    Terminal,
-    Zap,
-    Database,
-    FlameIcon,
+    Braces,
     ShieldCheck,
-    Braces
+    Cpu,
+    Binary,
+    Coffee,
+    Terminal,
+    Cog,
+    Gem,
+    type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -38,7 +38,6 @@ import {
 } from "@/components/ui/sidebar"
 import Image from "next/image"
 
-// Define the interface for a single playground item, icon is now a string
 interface PlaygroundData {
     id: string
     name: string
@@ -46,26 +45,24 @@ interface PlaygroundData {
     starred: boolean
 }
 
-// Map icon names (strings) to their corresponding LucideIcon components
 const lucideIconMap: Record<string, LucideIcon> = {
-    Zap: Zap,
-    Lightbulb: Lightbulb,
-    Database: Database,
-    Compass: Compass,
-    FlameIcon: FlameIcon,
-    Terminal: Terminal,
-    Code2: Code2,
-    ShieldCheck: ShieldCheck,
-    Braces: Braces
+    Cpu,
+    Binary,
+    Coffee,
+    Terminal,
+    Cog,
+    Gem,
+    Braces,
+    ShieldCheck,
+    Code2
 }
 
 export function DashboardSidebar({ initialPlaygroundData }: { initialPlaygroundData: PlaygroundData[] }) {
     const pathname = usePathname()
 
     const starredPlaygrounds = initialPlaygroundData.filter((p) => p.starred)
-    const recentPlaygrounds = initialPlaygroundData
+    const recentPlaygrounds = initialPlaygroundData.slice(0, 5)
 
-    // A reusable class string for the sleek purple/black button states
     const menuButtonClasses = "text-zinc-400 hover:bg-purple-900/20 hover:text-purple-300 data-[active=true]:bg-purple-900/40 data-[active=true]:text-purple-400 data-[active=true]:border-r-2 data-[active=true]:border-purple-500 transition-all duration-200"
 
     return (
@@ -98,6 +95,7 @@ export function DashboardSidebar({ initialPlaygroundData }: { initialPlaygroundD
                     </SidebarMenu>
                 </SidebarGroup>
 
+                {/* Starred Playgrounds */}
                 <SidebarGroup>
                     <SidebarGroupLabel className="text-purple-400/70 font-semibold tracking-wider text-xs uppercase mt-4">
                         <Star className="h-3.5 w-3.5 mr-2 text-purple-500" />
@@ -108,21 +106,16 @@ export function DashboardSidebar({ initialPlaygroundData }: { initialPlaygroundD
                     </SidebarGroupAction>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {starredPlaygrounds.length === 0 && recentPlaygrounds.length === 0 ? (
+                            {starredPlaygrounds.length === 0 ? (
                                 <div className="text-center text-purple-400/50 py-6 mx-2 my-2 text-sm border border-dashed border-purple-900/30 rounded-lg bg-purple-950/10 shadow-inner">
-                                    Create your playground
+                                    No starred files
                                 </div>
                             ) : (
                                 starredPlaygrounds.map((playground) => {
                                     const IconComponent = lucideIconMap[playground.icon] || Code2;
                                     return (
                                         <SidebarMenuItem key={playground.id}>
-                                            <SidebarMenuButton
-                                                asChild
-                                                isActive={pathname === `/playground/${playground.id}`}
-                                                tooltip={playground.name}
-                                                className={menuButtonClasses}
-                                            >
+                                            <SidebarMenuButton asChild isActive={pathname === `/playground/${playground.id}`} tooltip={playground.name} className={menuButtonClasses}>
                                                 <Link href={`/playground/${playground.id}`}>
                                                     <IconComponent className="h-4 w-4" />
                                                     <span>{playground.name}</span>
@@ -136,6 +129,7 @@ export function DashboardSidebar({ initialPlaygroundData }: { initialPlaygroundD
                     </SidebarGroupContent>
                 </SidebarGroup>
 
+                {/* Recent Playgrounds */}
                 <SidebarGroup>
                     <SidebarGroupLabel className="text-purple-400/70 font-semibold tracking-wider text-xs uppercase mt-2">
                         <History className="h-3.5 w-3.5 mr-2 text-purple-500" />
@@ -146,17 +140,12 @@ export function DashboardSidebar({ initialPlaygroundData }: { initialPlaygroundD
                     </SidebarGroupAction>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {starredPlaygrounds.length === 0 && recentPlaygrounds.length === 0 ? null : (
+                            {recentPlaygrounds.length === 0 ? null : (
                                 recentPlaygrounds.map((playground) => {
                                     const IconComponent = lucideIconMap[playground.icon] || Code2;
                                     return (
                                         <SidebarMenuItem key={playground.id}>
-                                            <SidebarMenuButton
-                                                asChild
-                                                isActive={pathname === `/playground/${playground.id}`}
-                                                tooltip={playground.name}
-                                                className={menuButtonClasses}
-                                            >
+                                            <SidebarMenuButton asChild isActive={pathname === `/playground/${playground.id}`} tooltip={playground.name} className={menuButtonClasses}>
                                                 <Link href={`/playground/${playground.id}`}>
                                                     <IconComponent className="h-4 w-4" />
                                                     <span>{playground.name}</span>
@@ -166,32 +155,11 @@ export function DashboardSidebar({ initialPlaygroundData }: { initialPlaygroundD
                                     );
                                 })
                             )}
-                            <SidebarMenuItem className="mt-2">
-                                <SidebarMenuButton asChild tooltip="View all" className="hover:bg-transparent hover:text-purple-300 justify-center">
-                                    <Link href="/playgrounds">
-                                        <span className="text-xs font-medium text-purple-500/70 hover:text-purple-400 transition-colors">
-                                            View all playgrounds &rarr;
-                                        </span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-purple-900/20 pb-4 pt-2">
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Settings" className={menuButtonClasses}>
-                            <Link href="/settings">
-                                <Settings className="h-4 w-4" />
-                                <span>Settings</span>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarFooter>
             <SidebarRail className="hover:after:bg-purple-500/50" />
         </Sidebar>
     )

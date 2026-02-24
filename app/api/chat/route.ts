@@ -1,5 +1,5 @@
 import { streamText, convertToModelMessages } from "ai";
-import { google } from '@ai-sdk/google';
+import { groq } from '@ai-sdk/groq';
 
 export const maxDuration = 30;
 
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     `;
 
     const result = streamText({
-        model: google('gemini-2.5-flash'),
+        model: groq('llama-3.3-70b-versatile'),
         system: dynamicSystemPrompt,
         messages: await convertToModelMessages(messages),
     });

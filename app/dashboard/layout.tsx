@@ -11,14 +11,14 @@ export default async function DashboardLayout({
     const playgroundData = await getAllPlaygroundForUser();
 
     const technologyIconMap: Record<string, string> = {
-        REACT: "Zap",
-        NEXTJS: "Lightbulb",
-        EXPRESS: "Database",
-        VUE: "Compass",
-        ANGULAR: "Terminal",
-        HONO: "FlameIcon",
-        TYPESCRIPT: "ShieldCheck",
+        CPP: "Cpu",
+        C: "Binary",
+        JAVA: "Coffee",
+        PYTHON: "Terminal",
+        RUST: "Cog",
+        RUBY: "Gem",
         JAVASCRIPT: "Braces",
+        TYPESCRIPT: "ShieldCheck",
     }
 
     const formattedPlaygroundData = playgroundData?.map(
@@ -33,7 +33,6 @@ export default async function DashboardLayout({
     return (
         <SidebarProvider>
             <div className="flex min-h-screen w-full overflow-x-hidden">
-
                 {/* @ts-ignore */}
                 <DashboardSidebar initialPlaygroundData={formattedPlaygroundData} />
 
