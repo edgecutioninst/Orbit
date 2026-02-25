@@ -26,7 +26,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         return Response.json({ error: "ID is required" }, { status: 400 });
     }
 
-    // 1. Fetch the playground AND its associated template files from the DB
     const playground = await db.playground.findUnique({
         where: { id },
         select: {
@@ -39,7 +38,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         return Response.json({ error: "Playground not found" }, { status: 404 });
     }
 
-    // 2. PERFORMANCE BOOST: If it's already in the DB, return it instantly!
     if (playground.templateFile && playground.templateFile.length > 0) {
         return Response.json({
             success: true,
@@ -47,7 +45,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         }, { status: 200 });
     }
 
-    // 3. If not in DB, we need to generate it
     const templateKey = playground.template as keyof typeof templatePaths;
     const templatePath = templatePaths[templateKey];
 
@@ -58,7 +55,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     try {
         const inputPath = path.join(process.cwd(), templatePath);
 
-        // Safely write to the system's temporary directory for deployment compatibility
         const outputFile = path.join(os.tmpdir(), `${templateKey}-${id}.json`);
 
         await saveTemplateStructureToJson(inputPath, outputFile);
@@ -68,13 +64,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             return Response.json({ error: "Invalid JSON structure in template output" }, { status: 400 });
         }
 
-        // Clean up the temp file
         await fs.unlink(outputFile);
 
-        // 4. SAVE TO DATABASE: Store the generated structure so we never have to do this again for this playground
         await db.templateFile.create({
             data: {
-                content: result as any, // Prisma will automatically handle converting this to Json
+                content: result as any,
                 playgroundId: id,
             }
         });

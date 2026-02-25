@@ -128,12 +128,10 @@ const MainPlaygroundPage = () => {
     const activeFile = openFiles.find((file) => file.id === activeFileId);
     const hasUnsavedChanges = openFiles.some((file) => file.hasUnsavedChanges);
 
-    // New States for Execution
     const [output, setOutput] = React.useState("");
     const [isRunning, setIsRunning] = React.useState(false);
     const [terminalInput, setTerminalInput] = React.useState("");
 
-    // The Execution Function
     const executeCode = async () => {
         if (!activeFile) {
             toast.error("No file selected to run");
@@ -199,7 +197,6 @@ const MainPlaygroundPage = () => {
                 );
 
 
-                // Update open files
                 const updatedOpenFiles = openFiles.map((f) =>
                     f.id === targetFileId
                         ? {
@@ -499,11 +496,8 @@ const MainPlaygroundPage = () => {
                                         {isPreviewVisible && (
                                             <>
                                                 <ResizableHandle />
-                                                {/* 1. We force the panel to have a relative position and NO minimum width */}
                                                 <ResizablePanel defaultSize={50} className="relative min-w-0">
 
-                                                    {/* 2. This absolute container is the "Secret Sauce" */}
-                                                    {/* It forces the chat/terminal to be exactly the size of the panel, never bigger */}
                                                     <div className="absolute inset-0 overflow-hidden flex flex-col">
 
                                                         {activeRightPanel === "terminal" ? (

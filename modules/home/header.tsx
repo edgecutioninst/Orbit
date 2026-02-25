@@ -19,7 +19,6 @@ export function Header() {
                             <div className="absolute inset-0 rounded-full bg-violet-500/20 blur-md" />
                         </div>
 
-                        {/* Forced white text for the logo */}
                         <span className="hidden sm:block text-xl font-bold tracking-tight text-zinc-100">
                             Orbit Editor
                         </span>
@@ -27,7 +26,7 @@ export function Header() {
 
                     <span className="h-6 border-l border-purple-900/30 mx-2"></span>
 
-                    {/* Desktop Navigation Links */}
+                    {/* Desktop Navigation Link */}
                     <nav className="hidden sm:flex items-center gap-6">
                         <a
                             href="https://github.com/edgecutioninst/Orbit.git"

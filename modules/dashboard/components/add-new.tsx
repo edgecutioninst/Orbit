@@ -12,7 +12,6 @@ import { toast } from "sonner";
 const AddNewButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // 1. Updated state type to match JDoodle languages
     const [selectedTemplate, setSelectedTemplate] = useState<{
         title: string,
         template: "CPP" | "C" | "JAVA" | "PYTHON" | "RUST" | "RUBY" | "JAVASCRIPT" | "TYPESCRIPT",
@@ -21,7 +20,6 @@ const AddNewButton = () => {
 
     const router = useRouter();
 
-    // 2. Updated parameter type to match JDoodle languages
     const handleSubmit = async (data: {
         title: string,
         template: "CPP" | "C" | "JAVA" | "PYTHON" | "RUST" | "RUBY" | "JAVASCRIPT" | "TYPESCRIPT",
@@ -41,7 +39,6 @@ const AddNewButton = () => {
                 onClick={() => setIsModalOpen(true)}
                 className={`group px-6 py-6 flex flex-row justify-between items-center border border-purple-900/20 rounded-xl bg-[#06020d] cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#0a0515] hover:border-purple-500/50 hover:scale-[1.02] shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.15)] relative overflow-hidden`}
             >
-                {/* Subtle gradient glow effect inside the card */}
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div className="flex flex-row justify-center items-start gap-4 relative z-10">

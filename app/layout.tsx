@@ -29,8 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* 1. Moved INSIDE the body tag! */}
-        {/* 2. Removed session={session} so it actively fetches on static pages! */}
+
         <SessionProvider>
           <ThemeProvider
             attribute="class"

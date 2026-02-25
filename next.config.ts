@@ -5,13 +5,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.githubusercontent.com', // Catches any GitHub avatar server
+        hostname: '*.githubusercontent.com',
         port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: '*.googleusercontent.com', // Catches lh3, lh4, lh5, etc.
+        hostname: '*.googleusercontent.com',
         port: '',
         pathname: '/**',
       }

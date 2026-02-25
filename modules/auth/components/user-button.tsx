@@ -11,7 +11,7 @@ const UserButton = () => {
     // Just use the client hook.
     const user = useCurrentUser();
 
-    if (!user) return null; // Or return a Login button if you prefer!
+    if (!user) return null;
 
     return (
         <DropdownMenu>

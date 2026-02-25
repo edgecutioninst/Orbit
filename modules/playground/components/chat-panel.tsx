@@ -12,7 +12,6 @@ interface ChatPanelProps {
     language: string;
 }
 
-// 1. We lock the PreBlock container so it CANNOT push the bubble wider
 const PreBlock = ({ children, ...props }: any) => {
     const [copied, setCopied] = useState(false);
     const rawText = children?.props?.children || '';
@@ -34,7 +33,6 @@ const PreBlock = ({ children, ...props }: any) => {
                     {copied ? <Check className="h-3 w-3 text-green-400" /> : <Copy className="h-3 w-3" />}
                 </button>
             </div>
-            {/* Add w-full and min-w-0 to the pre tag itself */}
             <pre className="bg-[#03000a] border border-purple-900/40 p-4 pt-8 rounded-md overflow-x-auto font-mono text-xs text-green-400 shadow-inner w-full min-w-0 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-purple-900/50 hover:scrollbar-thumb-purple-500/50" {...props}>
                 {children}
             </pre>
@@ -77,7 +75,6 @@ export default function ChatPanel({ onClose, code, language }: ChatPanelProps) {
                 </Button>
             </div>
 
-            {/* 2. Force overflow-x-hidden on the main messages area */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4 min-h-0 w-full">
                 {messages.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-zinc-500 text-sm">

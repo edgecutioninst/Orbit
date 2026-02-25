@@ -53,12 +53,10 @@ const AddRepo = () => {
 
             console.log(`Connecting to GitHub: ${owner}/${repo}...`);
 
-            // 1. Fetch repo details
             const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
             if (!repoRes.ok) throw new Error("Repository not found or is private");
             const repoData = await repoRes.json();
 
-            // 2. Check Language
             const primaryLanguage = repoData.language;
             const matchedTemplate = GITHUB_TO_TEMPLATE_MAP[primaryLanguage || ""];
 
@@ -70,12 +68,10 @@ const AddRepo = () => {
 
             const defaultBranch = repoData.default_branch;
 
-            // 3. Fetch Tree
             const treeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${defaultBranch}?recursive=1`);
             if (!treeRes.ok) throw new Error("Failed to fetch file tree");
             const treeData = await treeRes.json();
 
-            // 4. Filter Blobs (Files) & remove junk like node_modules or images to save DB space
             const files = treeData.tree.filter((item: any) =>
                 item.type === "blob" &&
                 !item.path.includes("node_modules") &&
@@ -83,8 +79,6 @@ const AddRepo = () => {
                 !item.path.includes(".jpg")
             );
 
-            // 5. SEND TO DATABASE (Server Action)
-            // We map it to just send the paths and GitHub URLs to keep the payload light
             const newPlaygroundId = await createPlaygroundFromGithub({
                 title: repo,
                 description: repoData.description || `Imported from ${url}`,
@@ -117,7 +111,6 @@ const AddRepo = () => {
                 <div
                     className={`group px-6 py-6 flex flex-row justify-between items-center border border-purple-900/20 rounded-xl bg-[#06020d] cursor-pointer transition-all duration-300 ease-in-out hover:bg-[#0a0515] hover:border-purple-500/50 hover:scale-[1.02] shadow-[0_4px_20px_rgba(0,0,0,0.4)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.15)] relative overflow-hidden`}
                 >
-                    {/* Subtle gradient glow effect inside the card */}
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     <div className="flex flex-row justify-center items-start gap-4 relative z-10">

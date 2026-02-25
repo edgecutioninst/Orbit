@@ -27,7 +27,6 @@ export const starterTemplates: Record<string, TemplateFolder> = {
             {
                 filename: "Main",
                 fileExtension: "java",
-                // Note: The public class name must match the filename in Java!
                 content: "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello World!\");\n    }\n}"
             }
         ]

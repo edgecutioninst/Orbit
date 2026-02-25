@@ -15,7 +15,7 @@ export function Footer() {
                     &copy; {new Date().getFullYear()} Orbit Editor
                 </p>
 
-                {/* Right: Social Links */}
+                {/* Social Links */}
                 <div className="flex items-center">
                     <Link
                         href="https://github.com/edgecutioninst/Orbit"
