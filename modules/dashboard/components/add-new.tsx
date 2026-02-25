@@ -6,22 +6,25 @@ import Image from "next/image"
 import { useState } from "react"
 import TemplateSelectingModal from "./template-selecting-modal"
 import { useRouter } from "next/navigation";
-import { createParam } from "@prisma/client/runtime/library";
 import { createPlayground } from "../actions";
 import { toast } from "sonner";
 
 const AddNewButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // 1. Updated state type to match JDoodle languages
     const [selectedTemplate, setSelectedTemplate] = useState<{
         title: string,
-        template: "REACT" | "NEXTJS" | "EXPRESS" | "ANGULAR" | "VUE" | "HONO" | "JAVASCRIPT" | "TYPESCRIPT",
+        template: "CPP" | "C" | "JAVA" | "PYTHON" | "RUST" | "RUBY" | "JAVASCRIPT" | "TYPESCRIPT",
         description?: string
     } | null>(null);
+
     const router = useRouter();
 
+    // 2. Updated parameter type to match JDoodle languages
     const handleSubmit = async (data: {
         title: string,
-        template: "REACT" | "NEXTJS" | "EXPRESS" | "ANGULAR" | "VUE" | "HONO" | "JAVASCRIPT" | "TYPESCRIPT",
+        template: "CPP" | "C" | "JAVA" | "PYTHON" | "RUST" | "RUBY" | "JAVASCRIPT" | "TYPESCRIPT",
         description?: string
     }) => {
         setSelectedTemplate(data);

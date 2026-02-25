@@ -19,7 +19,7 @@ import { toast } from "sonner"
 import { findFilePath } from '@/modules/playground/lib';
 import { executeCodeOnServer } from "@/modules/dashboard/actions/index"
 import LoadingStep from '@/modules/playground/components/loader';
-
+export const dynamic = "force-dynamic";
 
 const MainPlaygroundPage = () => {
 
@@ -131,6 +131,7 @@ const MainPlaygroundPage = () => {
     // New States for Execution
     const [output, setOutput] = React.useState("");
     const [isRunning, setIsRunning] = React.useState(false);
+    const [terminalInput, setTerminalInput] = React.useState("");
 
     // The Execution Function
     const executeCode = async () => {
@@ -145,7 +146,7 @@ const MainPlaygroundPage = () => {
         setOutput("Compiling and Running...\n");
 
         try {
-            const result = await executeCodeOnServer(activeFile.content, activeFile.fileExtension);
+            const result = await executeCodeOnServer(activeFile.content, activeFile.fileExtension, terminalInput);
             setOutput(result.output);
         } catch (error) {
             setOutput("Something went wrong trying to execute the code.");
@@ -518,9 +519,30 @@ const MainPlaygroundPage = () => {
                                                                         <X className="h-4 w-4" />
                                                                     </Button>
                                                                 </div>
-                                                                {/* 3. Added break-all to terminal to prevent wide output blowout */}
-                                                                <div className="flex-1 p-4 overflow-auto font-mono text-sm text-green-400 whitespace-pre-wrap break-all">
-                                                                    {output || "Ready to execute code..."}
+                                                                <div className="flex-1 flex flex-col h-full overflow-hidden">
+                                                                    {/* Input Section */}
+                                                                    <div className="flex-1 border-b border-purple-900/20 flex flex-col min-h-[50%]">
+                                                                        <div className="px-4 py-1 bg-purple-900/10 border-b border-purple-900/20 text-[10px] text-purple-400 font-semibold uppercase tracking-wider">
+                                                                            Standard Input (stdin)
+                                                                        </div>
+                                                                        <textarea
+                                                                            className="flex-1 w-full p-4 bg-transparent resize-none outline-none font-mono text-sm text-zinc-300 placeholder:text-purple-900/50"
+                                                                            placeholder="Type your inputs here (e.g., test cases, strings, numbers) before clicking Run..."
+                                                                            value={terminalInput}
+                                                                            onChange={(e) => setTerminalInput(e.target.value)}
+                                                                            spellCheck={false}
+                                                                        />
+                                                                    </div>
+
+                                                                    {/* Output Section */}
+                                                                    <div className="flex-1 flex flex-col min-h-[50%]">
+                                                                        <div className="px-4 py-1 bg-purple-900/10 border-b border-purple-900/20 text-[10px] text-purple-400 font-semibold uppercase tracking-wider">
+                                                                            Execution Output
+                                                                        </div>
+                                                                        <div className="flex-1 p-4 overflow-auto font-mono text-sm text-green-400 whitespace-pre-wrap break-all">
+                                                                            {output || "Ready to execute code..."}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         ) : (

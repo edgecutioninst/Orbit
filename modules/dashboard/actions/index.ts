@@ -185,8 +185,7 @@ export const toggleStarMarked = async (playgroundId: string, isChecked: boolean)
     }
 }
 
-export const executeCodeOnServer = async (content: string, extension: string) => {
-    // JDoodle specific language codes and compiler versions
+export const executeCodeOnServer = async (content: string, extension: string, stdin: string = "") => {
     const languageMap: Record<string, { lang: string, versionIndex: string }> = {
         "py": { lang: "python3", versionIndex: "4" },
         "cpp": { lang: "cpp17", versionIndex: "1" },
@@ -209,7 +208,8 @@ export const executeCodeOnServer = async (content: string, extension: string) =>
                 clientSecret: process.env.CLIENT_SECRET,
                 script: content,
                 language: config.lang,
-                versionIndex: config.versionIndex
+                versionIndex: config.versionIndex,
+                stdin: stdin
             }),
         });
 
