@@ -52,19 +52,19 @@ npm install
 ```
 
 **3. Set up environment variables**
-Create a .env file in the root directory and add the necessary credentials
+Create a `.env` file in the root directory and add the necessary credentials:
 
-```
-DATABASE_URL= Your MongoDB connection string
-AUTH_SECRET=	NextAuth secret key 
-AUTH_GITHUB_ID=	GitHub OAuth App Client ID
-AUTH_GITHUB_SECRET=	GitHub OAuth App Client Secret
-AUTH_GOOGLE_ID=	Google OAuth Client ID
-AUTH_GOOGLE_SECRET=	Google OAuth Client Secret
-CLIENT_ID=	JDoodle API Client ID
-CLIENT_SECRET=	JDoodle API Client Secret
-GROQ_API_KEY=	Groq API Key for AI features
-```
+| Variable | Description |
+| :--- | :--- |
+| `DATABASE_URL` | Your MongoDB connection string |
+| `AUTH_SECRET` | NextAuth secret key |
+| `AUTH_GITHUB_ID` | GitHub OAuth App Client ID |
+| `AUTH_GITHUB_SECRET` | GitHub OAuth App Client Secret |
+| `AUTH_GOOGLE_ID` | Google OAuth Client ID |
+| `AUTH_GOOGLE_SECRET` | Google OAuth Client Secret |
+| `CLIENT_ID` | JDoodle API Client ID |
+| `CLIENT_SECRET` | JDoodle API Client Secret |
+| `GROQ_API_KEY` | Groq API Key for AI features |
 
 **4. Initialize the database**
 ```bash
