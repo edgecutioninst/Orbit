@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🪐 Orbit Editor
 
-## Getting Started
+**Code with Intelligence.** A high-performance, browser-based Integrated Development Environment (IDE) featuring multi-language compilation, real-time AI assistance, and seamless GitHub integration. 
 
-First, run the development server:
+[**🚀 View Live Deployment**](https://orbit-code-editor.vercel.app)
 
+---
+
+## ✨ Key Features
+
+* **Multi-Language Compilation:** Write and execute code instantly in C++, Java, Python, Rust, Ruby, JavaScript, and TypeScript, powered by the JDoodle Execution API.
+* **Integrated AI Assistant:** Features an inline AI code helper (Copilot-style) and a conversational chatbot powered by Groq and the Vercel AI SDK to help debug and optimize code on the fly.
+* **GitHub Integration:** Seamlessly import and explore existing GitHub repositories directly within the browser environment.
+* **Workspace Management:** Create, update, delete, and organize multiple coding playgrounds with a robust file explorer and tabbed editor.
+* **Secure Authentication:** End-to-end secure login using GitHub and Google OAuth via NextAuth.js.
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend**
+* **Framework:** Next.js 16 (App Router) & React 19
+* **Styling:** Tailwind CSS v4 & Radix UI (Shadcn)
+* **Editor:** Monaco Editor (`@monaco-editor/react`)
+* **State Management:** Zustand
+
+**Backend & Database**
+* **Database:** MongoDB
+* **ORM:** Prisma
+* **Authentication:** NextAuth.js (v5 Beta)
+* **Execution Engine:** JDoodle API
+
+**AI Integration**
+* **Provider:** Groq API
+* **Library:** Vercel AI SDK
+
+---
+
+## 🚀 Local Installation
+
+To run Orbit Editor locally on your machine, follow these steps:
+
+**1. Clone the repository**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [https://github.com/edgecutioninst/Orbit.git](https://github.com/edgecutioninst/Orbit.git)
+cd Orbit
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**2. Install dependencies**
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**3. Set up environment variables**
+Create a .env file in the root directory and add the necessary credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+DATABASE_URL= Your MongoDB connection string
+AUTH_SECRET=	NextAuth secret key 
+AUTH_GITHUB_ID=	GitHub OAuth App Client ID
+AUTH_GITHUB_SECRET=	GitHub OAuth App Client Secret
+AUTH_GOOGLE_ID=	Google OAuth Client ID
+AUTH_GOOGLE_SECRET=	Google OAuth Client Secret
+CLIENT_ID=	JDoodle API Client ID
+CLIENT_SECRET=	JDoodle API Client Secret
+GROQ_API_KEY=	Groq API Key for AI features
+```
 
-## Learn More
+**4. Initialize the database**
+```bash
+npx prisma generate
+npx prisma db push
+```
 
-To learn more about Next.js, take a look at the following resources:
+**5. Start the development server**
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
