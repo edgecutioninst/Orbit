@@ -6,7 +6,7 @@ import { TemplateFileTree } from '@/modules/playground/components/playground-exp
 import { useFileExplorerStore } from '@/modules/playground/hooks/useFileExplorer';
 import { usePlayground } from '@/modules/playground/hooks/usePlayground';
 import { TemplateFile, TemplateFolder } from '@/modules/playground/lib/path-to-json';
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useCallback, useRef } from 'react'
 import ChatPanel from '@/modules/playground/components/chat-panel';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,7 @@ export const dynamic = "force-dynamic";
 const MainPlaygroundPage = () => {
 
     const { id } = useParams<{ id: string }>()
+    const router = useRouter()
     const [isPreviewVisible, setIsPreviewVisible] = React.useState(false)
 
     const [activeRightPanel, setActiveRightPanel] = React.useState<"terminal" | "chat">("terminal");
@@ -62,67 +63,69 @@ const MainPlaygroundPage = () => {
         }
     }, [templateData, openFiles.length, setTemplateData])
 
-    // Create wrapper functions that pass saveTemplateData
+    // wrapper functions that pass saveTemplateData 
     const wrappedHandleAddFile = useCallback(
-        (newFile: TemplateFile, parentPath: string) => {
-            return handleAddFile(
-                newFile,
-                parentPath,
-                saveTemplateData
-            );
+        async (newFile: TemplateFile, parentPath: string) => {
+            await handleAddFile(newFile, parentPath, saveTemplateData);
+            router.refresh();
         },
-        [handleAddFile, saveTemplateData]
+        [handleAddFile, saveTemplateData, router]
     );
 
     const wrappedHandleAddFolder = useCallback(
-        (newFolder: TemplateFolder, parentPath: string) => {
-            return handleAddFolder(newFolder, parentPath, saveTemplateData);
+        async (newFolder: TemplateFolder, parentPath: string) => {
+            await handleAddFolder(newFolder, parentPath, saveTemplateData);
+            router.refresh();
         },
-        [handleAddFolder, saveTemplateData]
+        [handleAddFolder, saveTemplateData, router]
     );
 
     const wrappedHandleDeleteFile = useCallback(
-        (file: TemplateFile, parentPath: string) => {
-            return handleDeleteFile(file, parentPath, saveTemplateData);
+        async (file: TemplateFile, parentPath: string) => {
+            await handleDeleteFile(file, parentPath, saveTemplateData);
+            router.refresh();
         },
-        [handleDeleteFile, saveTemplateData]
+        [handleDeleteFile, saveTemplateData, router]
     );
 
     const wrappedHandleDeleteFolder = useCallback(
-        (folder: TemplateFolder, parentPath: string) => {
-            return handleDeleteFolder(folder, parentPath, saveTemplateData);
+        async (folder: TemplateFolder, parentPath: string) => {
+            await handleDeleteFolder(folder, parentPath, saveTemplateData);
+            router.refresh();
         },
-        [handleDeleteFolder, saveTemplateData]
+        [handleDeleteFolder, saveTemplateData, router]
     );
 
     const wrappedHandleRenameFile = useCallback(
-        (
+        async (
             file: TemplateFile,
             newFilename: string,
             newExtension: string,
             parentPath: string
         ) => {
-            return handleRenameFile(
+            await handleRenameFile(
                 file,
                 newFilename,
                 newExtension,
                 parentPath,
                 saveTemplateData
             );
+            router.refresh();
         },
-        [handleRenameFile, saveTemplateData]
+        [handleRenameFile, saveTemplateData, router]
     );
 
     const wrappedHandleRenameFolder = useCallback(
-        (folder: TemplateFolder, newFolderName: string, parentPath: string) => {
-            return handleRenameFolder(
+        async (folder: TemplateFolder, newFolderName: string, parentPath: string) => {
+            await handleRenameFolder(
                 folder,
                 newFolderName,
                 parentPath,
                 saveTemplateData
             );
+            router.refresh();
         },
-        [handleRenameFolder, saveTemplateData]
+        [handleRenameFolder, saveTemplateData, router]
     );
 
     const activeFile = openFiles.find((file) => file.id === activeFileId);
