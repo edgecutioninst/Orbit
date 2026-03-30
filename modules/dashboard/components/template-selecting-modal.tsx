@@ -231,16 +231,15 @@ const TemplateSelectionModal = ({
                 }
             }}
         >
-            {/* We removed overflow-y-auto from DialogContent and added p-0 */}
-            <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden bg-[#06020d] border-purple-900/30 text-zinc-200">
-                
-                {/* Main Flex Container to control sticky/scroll behavior */}
-                <div className="flex flex-col max-h-[90vh]">
-                    
+            {/* Added p-0 and overflow-hidden to contain the new flex layout */}
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] p-0 overflow-hidden bg-[#06020d] border-purple-900/30 text-zinc-200">
+                {/* Main Flex Wrapper */}
+                <div className="flex flex-col h-full max-h-[90vh]">
+
                     {step === "select" ? (
                         <>
-                            {/* 1. STICKY HEADER */}
-                            <div className="p-6 border-b border-purple-900/20">
+                            {/* STICKY HEADER */}
+                            <div className="p-6 pb-4 border-b border-purple-900/20 shrink-0">
                                 <DialogHeader>
                                     <DialogTitle className="text-2xl font-bold text-purple-400 flex items-center gap-2">
                                         <Plus size={24} className="text-purple-500" />
@@ -253,7 +252,10 @@ const TemplateSelectionModal = ({
 
                                 <div className="flex flex-col sm:flex-row gap-4 mt-6">
                                     <div className="relative flex-1">
-                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500/50 outline-none" size={18} />
+                                        <Search
+                                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500/50 outline-none"
+                                            size={18}
+                                        />
                                         <Input
                                             placeholder="Search languages..."
                                             value={searchQuery}
@@ -261,20 +263,28 @@ const TemplateSelectionModal = ({
                                             className="pl-10 bg-[#0a0515] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50 focus-visible:ring-purple-500/50"
                                         />
                                     </div>
-                                    <Tabs defaultValue="all" className="w-full sm:w-auto" onValueChange={(value) => setCategory(value as any)}>
+
+                                    <Tabs
+                                        defaultValue="all"
+                                        className="w-full sm:w-auto"
+                                        onValueChange={(value) => setCategory(value as any)}
+                                    >
                                         <TabsList className="grid grid-cols-4 w-full sm:w-[400px] bg-[#0a0515] border border-purple-900/30 p-1">
-                                            <TabsTrigger value="all">All</TabsTrigger>
-                                            <TabsTrigger value="compiled">Compiled</TabsTrigger>
-                                            <TabsTrigger value="oop">OOP</TabsTrigger>
-                                            <TabsTrigger value="scripting">Scripting</TabsTrigger>
+                                            <TabsTrigger value="all" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">All</TabsTrigger>
+                                            <TabsTrigger value="compiled" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">Compiled</TabsTrigger>
+                                            <TabsTrigger value="oop" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">OOP</TabsTrigger>
+                                            <TabsTrigger value="scripting" className="data-[state=active]:bg-purple-900/40 data-[state=active]:text-purple-300">Scripting</TabsTrigger>
                                         </TabsList>
                                     </Tabs>
                                 </div>
                             </div>
 
-                            {/* 2. SCROLLABLE CONTENT AREA */}
+                            {/* SCROLLABLE GRID AREA */}
                             <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                                <RadioGroup value={selectedTemplate || ""} onValueChange={handleSelectTemplate}>
+                                <RadioGroup
+                                    value={selectedTemplate || ""}
+                                    onValueChange={handleSelectTemplate}
+                                >
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {filteredTemplates.length > 0 ? (
                                             filteredTemplates.map((template) => (
@@ -286,55 +296,95 @@ const TemplateSelectionModal = ({
                                                         }`}
                                                     onClick={() => handleSelectTemplate(template.id)}
                                                 >
-                                                    <div className="absolute top-4 right-4 flex gap-1">{renderStars(template.popularity)}</div>
+                                                    <div className="absolute top-4 right-4 flex gap-1">
+                                                        {renderStars(template.popularity)}
+                                                    </div>
+
                                                     {selectedTemplate === template.id && (
                                                         <div className="absolute top-3 left-3 bg-purple-600 text-white rounded-full p-1 shadow-[0_0_10px_rgba(168,85,247,0.5)]">
                                                             <Check size={12} strokeWidth={3} />
                                                         </div>
                                                     )}
+
                                                     <div className="flex gap-4 w-full pl-6">
-                                                        <div className="relative w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-xl bg-[#06020d] border border-purple-900/30 shadow-inner">
+                                                        <div
+                                                            className="relative w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-xl bg-[#06020d] border border-purple-900/30 shadow-inner"
+                                                        >
                                                             {template.lucideIcon ? (
                                                                 <template.lucideIcon size={28} style={{ color: template.color }} />
                                                             ) : (
-                                                                <Image src={template.icon || "/placeholder.svg"} alt={`${template.name} icon`} width={32} height={32} className="object-contain" />
+                                                                <Image
+                                                                    src={template.icon || "/placeholder.svg"}
+                                                                    alt={`${template.name} icon`}
+                                                                    width={32}
+                                                                    height={32}
+                                                                    className="object-contain drop-shadow-md"
+                                                                    onError={(e) => {
+                                                                        e.currentTarget.style.display = 'none';
+                                                                    }}
+                                                                />
                                                             )}
                                                         </div>
+
                                                         <div className="flex flex-col w-full">
                                                             <div className="flex items-center gap-2 mb-1">
-                                                                <h3 className="text-lg font-semibold text-purple-100">{template.name}</h3>
+                                                                <h3 className="text-lg font-semibold text-purple-100">
+                                                                    {template.name}
+                                                                </h3>
                                                                 <div className="flex gap-1">
                                                                     {template.category === "compiled" && <Cpu size={14} className="text-blue-400" />}
                                                                     {template.category === "oop" && <Layers size={14} className="text-orange-400" />}
                                                                     {template.category === "scripting" && <Terminal size={14} className="text-green-400" />}
                                                                 </div>
                                                             </div>
-                                                            <p className="text-xs text-purple-400/50 mb-4 line-clamp-2">{template.description}</p>
+
+                                                            <p className="text-xs text-purple-400/50 mb-4 line-clamp-2">
+                                                                {template.description}
+                                                            </p>
+
                                                             <div className="flex flex-wrap gap-2 mt-auto">
                                                                 {template.tags.map((tag) => (
-                                                                    <span key={tag} className="text-[10px] px-2 py-0.5 border border-purple-900/40 bg-purple-950/30 text-purple-300 rounded-full">{tag}</span>
+                                                                    <span
+                                                                        key={tag}
+                                                                        className="text-[10px] px-2 py-0.5 border border-purple-900/40 bg-purple-950/30 text-purple-300 rounded-full"
+                                                                    >
+                                                                        {tag}
+                                                                    </span>
                                                                 ))}
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <RadioGroupItem value={template.id} id={template.id} className="sr-only" />
+
+                                                    <RadioGroupItem
+                                                        value={template.id}
+                                                        id={template.id}
+                                                        className="sr-only"
+                                                    />
                                                 </div>
                                             ))
                                         ) : (
                                             <div className="col-span-2 flex flex-col items-center justify-center p-12 text-center border border-dashed border-purple-900/30 rounded-xl bg-[#0a0515]">
                                                 <Code size={48} className="text-purple-900/50 mb-4" />
-                                                <h3 className="text-lg font-medium text-purple-300">No languages found</h3>
+                                                <h3 className="text-lg font-medium text-purple-300">
+                                                    No languages found
+                                                </h3>
+                                                <p className="text-sm text-purple-500/50">
+                                                    Try adjusting your search or filters
+                                                </p>
                                             </div>
                                         )}
                                     </div>
                                 </RadioGroup>
                             </div>
 
-                            {/* 3. STICKY FOOTER */}
-                            <div className="p-6 border-t border-purple-900/20 bg-[#0a0515]/50 flex justify-between items-center">
+                            {/* STICKY FOOTER */}
+                            <div className="p-6 border-t border-purple-900/20 bg-[#0a0515] shrink-0 flex justify-between items-center gap-3">
                                 <div className="flex items-center text-sm text-purple-400/50">
                                     <Clock size={14} className="mr-2 text-purple-500" />
-                                    <span>Estimated setup time: <span className="text-purple-300">{selectedTemplate ? "< 1 second" : "Select a language"}</span></span>
+                                    <span>
+                                        Estimated setup time:{" "}
+                                        <span className="text-purple-300">{selectedTemplate ? "< 1 second" : "Select a language"}</span>
+                                    </span>
                                 </div>
                                 <div className="flex gap-3">
                                     <Button variant="outline" onClick={onClose} className="border-purple-900/30 bg-transparent text-purple-300 hover:bg-purple-900/20 hover:text-purple-200">
@@ -351,40 +401,54 @@ const TemplateSelectionModal = ({
                             </div>
                         </>
                     ) : (
-                        /* Step 2: Configure UI (Kept inside the flex-col wrapper) */
-                        <div className="p-8">
-                            <DialogHeader className="mb-8">
-                                <DialogTitle className="text-2xl font-bold text-purple-400">Configure Your Environment</DialogTitle>
+                        /* Configure Step (No complex flex-scroll needed here as it's small) */
+                        <div className="p-6 overflow-y-auto">
+                            <DialogHeader className="mb-6">
+                                <DialogTitle className="text-2xl font-bold text-purple-400">
+                                    Configure Your Environment
+                                </DialogTitle>
                                 <DialogDescription className="text-purple-400/50">
                                     <span className="text-purple-300 font-semibold">{templates.find((t) => t.id === selectedTemplate)?.name}</span> playground configuration
                                 </DialogDescription>
                             </DialogHeader>
-                            <div className="space-y-6">
-                                <div className="space-y-3">
+
+                            <div className="flex flex-col gap-6 py-4">
+                                <div className="flex flex-col gap-3">
                                     <Label htmlFor="project-name" className="text-purple-300">Project Name</Label>
                                     <Input
                                         id="project-name"
                                         placeholder="my-algorithm-practice"
                                         value={projectName}
                                         onChange={(e) => setProjectName(e.target.value)}
-                                        className="bg-[#0a0515] border-purple-900/30 text-purple-100 focus-visible:ring-purple-500/50"
+                                        className="bg-[#0a0515] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50 focus-visible:ring-purple-500/50"
                                     />
                                 </div>
-                                <div className="p-5 bg-purple-950/10 rounded-xl border border-purple-900/30">
+
+                                <div className="p-5 bg-purple-950/10 rounded-xl border border-purple-900/30 shadow-[inset_0_0_20px_rgba(168,85,247,0.02)]">
                                     <h3 className="font-medium text-purple-300 mb-4">Selected Environment Features</h3>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {templates.find((t) => t.id === selectedTemplate)?.features.map((feature) => (
-                                            <div key={feature} className="flex items-center gap-2">
-                                                <Zap size={14} className="text-purple-500" />
-                                                <span className="text-sm text-purple-200/80">{feature}</span>
-                                            </div>
-                                        ))}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {templates
+                                            .find((t) => t.id === selectedTemplate)
+                                            ?.features.map((feature) => (
+                                                <div key={feature} className="flex items-center gap-2">
+                                                    <Zap size={14} className="text-purple-500" />
+                                                    <span className="text-sm text-purple-200/80">{feature}</span>
+                                                </div>
+                                            ))}
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex justify-between gap-3 mt-10 pt-6 border-t border-purple-900/20">
-                                <Button variant="outline" onClick={handleBack} className="border-purple-900/30 bg-transparent text-purple-300">Back</Button>
-                                <Button className="bg-purple-600 hover:bg-purple-500 text-white" onClick={handleCreateProject}>Initialize Vault</Button>
+
+                            <div className="flex justify-between gap-3 mt-4 pt-4 border-t border-purple-900/20">
+                                <Button variant="outline" onClick={handleBack} className="border-purple-900/30 bg-transparent text-purple-300 hover:bg-purple-900/20 hover:text-purple-200">
+                                    Back
+                                </Button>
+                                <Button
+                                    className="bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_15px_rgba(147,51,234,0.3)]"
+                                    onClick={handleCreateProject}
+                                >
+                                    Initialize Vault
+                                </Button>
                             </div>
                         </div>
                     )}
