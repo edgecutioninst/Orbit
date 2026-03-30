@@ -71,6 +71,7 @@ Create a `.env` file in the root directory and add the necessary credentials:
 | `CLIENT_SECRET` | JDoodle API Client Secret |
 | `GROQ_API_KEY` | Groq API Key for AI features |
 
+
 **4. Initialize the database**
 ```bash
 npx prisma generate
